@@ -1,0 +1,118 @@
+#!/bin/bash
+
+CWD=`cd $(dirname $0);pwd`
+
+WORKDIR=$CWD/..
+
+ROUTER_CONTROL=$WORKDIR/router/bin/serverctl
+LOGIC_CONTROL=$WORKDIR/logic/bin/serverctl
+COMET_CONTROL=$WORKDIR/comet/bin/serverctl
+JOB_CONTROL=$WORKDIR/job/bin/serverctl
+
+function op_wrapper()
+{
+	case $1 in
+		router)
+			$ROUTER_CONTROL $2
+			;;
+
+		logic)
+			$LOGIC_CONTROL $2
+			;;
+
+		comet)
+			$COMET_CONTROL $2
+			;;
+
+		job)
+			$JOB_CONTROL $2
+			;;
+		all)
+			$ROUTER_CONTROL $2
+			$LOGIC_CONTROL $2
+			$COMET_CONTROL $2
+			$JOB_CONTROL $2
+			;;
+	esac
+		
+}
+
+function start()
+{
+	op_wrapper $TARGET start
+}
+
+function stop()
+{
+	op_wrapper $TARGET stop
+}
+
+function restart()
+{
+    stop
+    start 
+}
+
+function reload()
+{
+     restart
+}
+
+function check()
+{
+	op_wrapper $TARGET check
+}
+
+function usage()
+{
+	echo "usage:$0 [start|stop|restart|reload|check] [router|logic|comet|job]"
+	exit 1
+}
+
+TARGET=all
+
+if [ $# -lt 1 ];then
+	usage
+fi
+
+OP=$1
+
+if [ $# -ge 2 ];then
+	TEMP=$2
+	if [[ "$TEMP" = "router"  ||  "$TEMP" = "logic" || "$TEMP" = "comet" || "$TEMP" = "job" ]];then
+		TARGET=$TEMP
+	else
+		usage
+	fi
+fi
+
+
+case $1 in
+    stop)
+    stop 
+    exit;
+    ;;
+    start)
+    start 
+    exit;
+    ;;
+    restart)
+    restart 
+    exit;
+    ;;
+    reload)
+    reload 
+    exit;
+    ;;
+    check)
+    check
+    exit;
+    ;;
+    *)
+    echo "what ?"
+    echo "$0 start "
+    echo "$0 restart "
+    echo "$0 stop "
+    echo "$0 check "
+    ;;
+esac

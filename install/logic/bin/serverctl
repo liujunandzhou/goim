@@ -1,0 +1,129 @@
+#!/bin/sh
+
+APPNAME=logic
+
+CWD=`cd $(dirname $0);pwd`
+
+source $CWD/../utl/logging_util.sh 
+
+WORKDIR=$CWD/..
+
+SERVER=$CWD/$APPNAME
+
+PIDFILE=$WORKDIR/proc/${APPNAME}.pid
+LOGPATH_DEBUG=$WORKDIR/log/${APPNAME}_debug.log
+LOGPATH_INFO=$WORKDIR/log/${APPNAME}_info.log
+LOGPATH_WARNING=$WORKDIR/log/${APPNAME}_warning.log
+LOGPATH_ERROR=$WORKDIR/log/${APPNAME}_error.log
+
+CONFIG=$WORKDIR/conf/${APPNAME}.conf
+CONFIG_TEMPLATE=$WORKDIR/conf/${APPNAME}.conf.template
+
+LOGPATH=$WORKDIR/conf/${APPNAME}-log.xml
+LOGPATH_TEMPLATE=$WORKDIR/conf/${APPNAME}-log.xml.template
+
+#替换pid配置以及日志路径配置
+sed "s,<PID_FILE>,$PIDFILE,g" $CONFIG_TEMPLATE > $CONFIG
+sed -i "s,<LOG_FILE>,$LOGPATH,g" $CONFIG
+
+#替换日志文件配置
+
+sed "s,<DEBUG_PATH>,$LOGPATH_DEBUG,g" $LOGPATH_TEMPLATE > $LOGPATH
+sed -i "s,<INFO_PATH>,$LOGPATH_INFO,g" $LOGPATH
+sed -i "s,<WARNING_PATH>,$LOGPATH_WARNING,g" $LOGPATH
+sed -i "s,<ERROR_PATH>,$LOGPATH_ERROR,g" $LOGPATH
+
+#增加可执行权限
+chmod +x $SERVER
+
+function check() 
+{
+	cnt=`ps -ef|grep "$SERVER"|grep -v grep |wc -l`
+
+	if [[ $cnt -gt 0 ]];then
+			echo 1
+	else
+			echo 0
+	fi
+}
+
+function start()
+{
+	ret=`check`
+
+	if [ $ret -eq 0 ];then
+		nohup $SERVER -c $CONFIG "$*"  >/dev/null 2>&1 &
+		sleep 1
+	else
+		error_log "${APPNAME}正在运行中"
+		exit 1
+	fi
+
+	ret=`check`
+
+	if [ $ret -gt 0 ];then
+		info_log "${APPNAME}启动成功"
+	else
+		error_log "${APPNAME}启动失败"
+	fi
+}
+
+function stop()
+{
+	ps -ef|grep "$SERVER"|grep -v grep|awk '{ print $2 }'|xargs kill -9 2>/dev/null
+	#use the pid to control the process
+
+	sleep 1
+	
+	ret=`check`
+
+	if [ $ret -eq 0 ];then
+		info_log "${APPNAME}停止成功"
+	else
+		error_log "${APPNAME}停止失败"
+	fi
+}
+
+function restart()
+{
+	stop
+	start
+}
+
+function usage()
+{
+	echo "usage:$0 [start|stop|restart] --debug"
+	exit 1
+}
+
+if [ $# -lt 1 ];then
+	usage
+fi
+
+OP=$1
+
+shift 1
+
+ARGS=""
+
+if [ $# -gt 1 ];then
+	ARGS="$*"
+fi
+
+case $OP in
+	"start")
+		start
+	;;
+	"stop")
+		stop
+	;;
+	"restart")
+		restart
+	;;
+	"help")
+		usage
+	;;
+	*)
+		usage
+	;;
+esac
