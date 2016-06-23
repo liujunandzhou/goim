@@ -6,6 +6,7 @@
 # Folders
 _obj
 _test
+goim-*/
 
 # Architecture specific extensions/prefixes
 *.[568vq]
@@ -18,6 +19,14 @@ _cgo_gotypes.go
 _cgo_export.*
 
 _testmain.go
+
+benchmark/client/client
+comet/client/client
+comet/comet
+logic/job/job
+logic/logic
+router/monitor/monitor
+router/router
 
 *.exe
 *.test
