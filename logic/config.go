@@ -48,19 +48,21 @@ type Config struct {
 	// router RPC
 	RouterRPCAddrs map[string]string `-`
 	// kafka
-	KafkaAddrs []string `goconf:"kafka:addrs"`
+	KafkaAddrs      []string `goconf:"kafka:addrs"`
+	KafkaPushsTopic string   `goconf:"kafka:topic"`
 }
 
 func NewConfig() *Config {
 	return &Config{
 		// base section
-		PidFile:        "/tmp/goim-logic.pid",
-		Dir:            "./",
-		Log:            "./logic-log.xml",
-		MaxProc:        runtime.NumCPU(),
-		PprofAddrs:     []string{"localhost:6971"},
-		HTTPAddrs:      []string{"7172"},
-		RouterRPCAddrs: make(map[string]string),
+		PidFile:         "/tmp/goim-logic.pid",
+		Dir:             "./",
+		Log:             "./logic-log.xml",
+		MaxProc:         runtime.NumCPU(),
+		PprofAddrs:      []string{"localhost:6971"},
+		HTTPAddrs:       []string{"7172"},
+		RouterRPCAddrs:  make(map[string]string),
+		KafkaPushsTopic: "KafkaPushsTopic",
 	}
 }
 

@@ -24,6 +24,7 @@ type Config struct {
 	ZKAddrs      []string         `goconf:"kafka:zookeeper.list:,"`
 	ZKRoot       string           `goconf:"kafka:zkroot"`
 	KafkaTopic   string           `goconf:"kafka:topic"`
+	KafkaGroup   string           `goconf:"kafka:group"`
 	Comets       map[int32]string `goconf:"-"`
 	PushChan     int              `goconf:"push:chan"`
 	PushChanSize int              `goconf:"push:chan.size"`
@@ -39,7 +40,8 @@ func NewConfig() *Config {
 	return &Config{
 		Comets:       make(map[int32]string),
 		ZKRoot:       "",
-		KafkaTopic:   "kafka_topic_push",
+		KafkaTopic:   "KafkaPushsTopic",
+		KafkaGroup:   "kafka_topic_push_group",
 		PushChan:     4,
 		PushChanSize: 100,
 		//timer
