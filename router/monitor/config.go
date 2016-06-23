@@ -37,6 +37,10 @@ func InitConfig() (err error) {
 		return err
 	}
 
+	if err := _gconf.Unmarshal(Conf); err != nil {
+		return err
+	}
+
 	for _, serverid := range _gconf.Get("router.addrs").Keys() {
 		addr, err := _gconf.Get("router.addrs").String(serverid)
 
