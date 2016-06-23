@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	KafkaPushsTopic = "KafkaPushsTopic"
+	KafkaPushsTopic = "KafkaPushsTopic-liujun"
 )
 
 var (

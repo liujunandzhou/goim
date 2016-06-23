@@ -1,0 +1,2 @@
+说明:
+模拟logic,想router发送信息,用来查看router基本信息

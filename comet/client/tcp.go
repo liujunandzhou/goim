@@ -25,7 +25,7 @@ func initTCP() {
 	// time.Sleep(time.Second * 31)
 	proto.Operation = OP_AUTH
 	proto.SeqId = seqId
-	proto.Body = []byte("test")
+	proto.Body = []byte("12345")
 	if err = tcpWriteProto(wr, proto); err != nil {
 		log.Error("tcpWriteProto() error(%v)", err)
 		return
@@ -35,6 +35,7 @@ func initTCP() {
 		return
 	}
 	log.Debug("auth ok, proto: %v", proto)
+
 	seqId++
 	// writer
 	go func() {
@@ -50,24 +51,29 @@ func initTCP() {
 			}
 			// test heartbeat
 			//time.Sleep(time.Second * 31)
-			seqId++
-			// op_test
-			proto1.Operation = OP_TEST
-			proto1.SeqId = seqId
-			if err = tcpWriteProto(wr, proto1); err != nil {
-				log.Error("tcpWriteProto() error(%v)", err)
-				return
-			}
+			/*
+				seqId++
+				// op_test
+				proto1.Operation = OP_TEST
+				proto1.SeqId = seqId
+				if err = tcpWriteProto(wr, proto1); err != nil {
+					log.Error("tcpWriteProto() error(%v)", err)
+					return
+				}
+
+			*/
 			seqId++
 			time.Sleep(10000 * time.Millisecond)
 		}
 	}()
 	// reader
 	for {
+
 		if err = tcpReadProto(rd, proto); err != nil {
 			log.Error("tcpReadProto() error(%v)", err)
 			return
 		}
+
 		if proto.Operation == OP_HEARTBEAT_REPLY {
 			log.Debug("receive heartbeat")
 			if err = conn.SetReadDeadline(time.Now().Add(25 * time.Second)); err != nil {
