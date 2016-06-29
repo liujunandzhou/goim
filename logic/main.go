@@ -25,7 +25,7 @@ func main() {
 	MergeCount()
 	go SyncCount()
 	// logic rpc
-	if err := InitRPC(NewDefaultAuther()); err != nil {
+	if err := InitRPC(NewSimpleAuther()); err != nil {
 		panic(err)
 	}
 	if err := InitHTTP(); err != nil {

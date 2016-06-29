@@ -160,6 +160,7 @@ func Pushs(w http.ResponseWriter, r *http.Request) {
 	subKeys = genSubKeys(userIds)
 	for serverId, keys = range subKeys {
 		if err = mpushKafka(serverId, keys, bodyBytes); err != nil {
+
 			res["ret"] = InternalErr
 			return
 		}
@@ -197,6 +198,7 @@ func PushRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err = broadcastRoomKafka(int32(rid), bodyBytes, enable); err != nil {
+
 		log.Error("broadcastRoomKafka(\"%s\",\"%s\",\"%d\") error(%s)", rid, body, enable, err)
 		res["ret"] = InternalErr
 		return

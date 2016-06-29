@@ -1,0 +1,20 @@
+#目前支持的push种类
+官方描述文档: https://github.com/Terry-Mao/goim/blob/master/doc/push.md
+
+#目前支持四种消息推送格式
+1. 单人推送
+curl -d "{\"test\":1}" http://127.0.0.1:7172/1/push?uid=0
+
+2. 单消息多人推送
+curl -d "{\"u\":[1,2,3,4,5],\"m\":{\"test\":1}}" http://127.0.0.1:7172/1/pushs
+
+3. 房间推送
+curl -d "{\"test\": 1}" http://127.0.0.1:7172/1/push/room?rid=1
+
+4. 广播
+curl -d "{\"test\": 1}" http://127.0.0.1:7172/1/push/all
+
+说明:其中:7272端口是logic的监听端口
+
+
+
