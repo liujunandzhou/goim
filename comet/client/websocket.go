@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	log "github.com/thinkboy/log4go"
@@ -16,6 +17,21 @@ func initWebsocket() {
 		log.Error("websocket.Dial(\"%s\") error(%v)", Conf.WebsocketAddr, err)
 		return
 	}
+
+	var auth_s AuthData
+
+	auth_s.UserId = 12345678
+	auth_s.RoomId = 15
+
+	authStr, errEnc := auth_s.Encode()
+
+	if errEnc != nil {
+
+		log.Error("AuthData.Encode failed")
+		return
+	}
+
+	fmt.Printf("AuthStr=%s\n", string(authStr))
 	proto := new(Proto)
 	proto.Ver = 1
 	// auth
@@ -24,7 +40,9 @@ func initWebsocket() {
 	proto.Operation = OP_AUTH
 	seqId := int32(0)
 	proto.SeqId = seqId
-	proto.Body = []byte("{\"test\":1}")
+
+	proto.Body = authStr
+
 	if err = websocketWriteProto(conn, proto); err != nil {
 		log.Error("websocketWriteProto() error(%v)", err)
 		return
@@ -58,7 +76,7 @@ func initWebsocket() {
 				return
 			}
 			seqId++
-			time.Sleep(10000 * time.Millisecond)
+			time.Sleep(2000 * time.Millisecond)
 		}
 	}()
 	// reader

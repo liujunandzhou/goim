@@ -26,6 +26,7 @@ comet/comet
 logic/job/job
 logic/logic
 router/monitor/monitor
+comet/comet_cpp_client/comet_client
 router/router
 
 *.exe

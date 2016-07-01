@@ -1,12 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"goim/libs/define"
 	"strconv"
 	"strings"
 )
-
-import ()
 
 type SimpleAuth struct {
 }
@@ -16,7 +15,18 @@ func NewSimpleAuther() *SimpleAuth {
 	return &SimpleAuth{}
 }
 
+type AuthData struct {
+	UserId int64 `json:"userid"`
+	RoomId int32 `json:"roomid"`
+}
+
+//说明发送json格式的数据
 func (this *SimpleAuth) Auth(token string) (userId int64, roomId int32) {
+
+	return this.parseJsonData(token)
+}
+
+func (this *SimpleAuth) parseStrData(token string) (userId int64, roomId int32) {
 
 	var err error
 	var room int
@@ -37,6 +47,27 @@ func (this *SimpleAuth) Auth(token string) (userId int64, roomId int32) {
 			roomId = int32(room)
 		}
 	}
+
+	return
+
+}
+
+func (this *SimpleAuth) parseJsonData(token string) (userId int64, roomId int32) {
+
+	var authData AuthData
+
+	if err := json.Unmarshal([]byte(token), &authData); err != nil {
+
+		userId = 0
+
+		roomId = define.NoRoom
+
+		return
+	}
+
+	userId = authData.UserId
+
+	roomId = authData.RoomId
 
 	return
 }

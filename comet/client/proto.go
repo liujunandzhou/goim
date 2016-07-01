@@ -40,3 +40,13 @@ type Proto struct {
 func (p *Proto) Print() {
 	log.Info("\n-------- proto --------\nver: %d\nop: %d\nseq: %d\nbody: %s\n", p.Ver, p.Operation, p.SeqId, string(p.Body))
 }
+
+type AuthData struct {
+	UserId int64 `json:"userid"` //userid
+	RoomId int32 `json:"roomid"` //roomid
+}
+
+func (this *AuthData) Encode() ([]byte, error) {
+
+	return json.Marshal(this)
+}

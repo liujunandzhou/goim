@@ -56,18 +56,23 @@ function checkResult($notice,$res)
 	var_dump($res);
 }
 
-$userId=12346778;
+$userId=12345678;
 
 $roomId=15;
 
 $curTime=date("Y-m-d H:i:s");
+
 
 $messageStruct=array(
 	#"message"=>str_repeat("Now is ${curTime},我的名字叫刘军",1000)
 	"message"=>"Now is ${curTime},我的名字叫刘军"
 );
 
+
+
 $data=json_encode($messageStruct);
+
+//$data="当前时间是:${curTime},我的名字叫刘军";
 
 #测试PushOne逻辑
 checkResult("PushOne",PushOne($userId,$data));

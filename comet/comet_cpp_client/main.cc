@@ -28,6 +28,7 @@
 #include "packet.h"
 #include "packet_coder.h"
 #include "log.h"
+#include "cJSON.h"
 #include "simple_packet_handler.h"
 
 #define UNUSED_PARAM(param) (void)param
@@ -37,6 +38,27 @@ void Usage(int argc,char *argv[])
 	UNUSED_PARAM(argc);
 	std::cerr<<"usage:"<<argv[0]<< " ip:port"<<std::endl;
 	exit(1);
+}
+
+std::string  BuildAuthData(int64_t user_id,int32_t room_id)
+{
+	cJSON *jroot=cJSON_CreateObject();
+
+	cJSON_AddItemToObject(jroot,"userid",cJSON_CreateNumber(user_id));
+	cJSON_AddItemToObject(jroot,"roomid",cJSON_CreateNumber(room_id));
+
+	std::string str="{\"userid\":0,\"roomid\":1}";
+
+	char *result=cJSON_PrintUnformatted(jroot);
+
+	if(result!=NULL){
+
+		str=result;
+
+		free(result);
+	}
+
+	return str;
 }
 
 SimplePacketHandler default_handler;
@@ -110,7 +132,7 @@ int main(int argc,char *argv[])
 	auth_packet.packet_header.seqid_size=global_seq++;
 	auth_packet.packet_header.header_size=PACKET_SIZE;
 	auth_packet.packet_header.operation_size=OP_AUTH;
-	auth_packet.body="12346778@15";
+	auth_packet.body=BuildAuthData(12345678,15);
 
 	if(default_handler.SendPacket(auth_packet)==false){
 		log_info("Send Auth packet failed");

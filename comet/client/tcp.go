@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/binary"
+	"fmt"
 	"net"
 	"time"
 
@@ -23,9 +24,25 @@ func initTCP() {
 	// auth
 	// test handshake timeout
 	// time.Sleep(time.Second * 31)
+	var auth_s AuthData
+
+	auth_s.UserId = 12345678
+	auth_s.RoomId = 15
+
+	authStr, errEnc := auth_s.Encode()
+
+	if errEnc != nil {
+
+		log.Error("AuthData.Encode failed")
+		return
+	}
+
+	fmt.Printf("AuthStr=%s\n", string(authStr))
+
 	proto.Operation = OP_AUTH
 	proto.SeqId = seqId
-	proto.Body = []byte("12345@12")
+	proto.Body = authStr
+
 	if err = tcpWriteProto(wr, proto); err != nil {
 		log.Error("tcpWriteProto() error(%v)", err)
 		return
